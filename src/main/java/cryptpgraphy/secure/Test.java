@@ -1,4 +1,4 @@
-package secure;
+package cryptpgraphy.secure;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
