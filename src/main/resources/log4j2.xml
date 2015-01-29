@@ -28,14 +28,14 @@
     </Appenders>
 
     <Loggers>
-        <Logger name="org.apache.log4j.xml" level="info"/>
-        <Logger name="cryptography.sniffer.Sniffer" level="info">
-            <AppenderRef ref="File2"/>
-        </Logger>
-        <Root level="debug">
+        <Logger name="cryptography.secure.Test" level="debug">
             <AppenderRef ref="STDOUT"/>
             <AppenderRef ref="File1"/>
-        </Root>
+        </Logger>
+        <Logger name="cryptography.sniffer.Sniffer" level="debug">
+            <AppenderRef ref="STDOUT"/>
+            <AppenderRef ref="File2"/>
+        </Logger>
     </Loggers>
 
 </Configuration>

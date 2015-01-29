@@ -1,6 +1,8 @@
 package cryptpgraphy.sniffer;
 
-import cryptpgraphy.Log;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import org.jnetpcap.Pcap;
 import org.jnetpcap.PcapIf;
 import org.jnetpcap.packet.PcapPacketHandler;
@@ -19,40 +21,43 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class Sniffer {
 
+    private static final String ANSI_YELLOW = "\u001B[33m";
+    private static final Logger logger = LogManager.getLogger(Sniffer.class);
+
     public static void main(String[] args) throws InterruptedException {
         List<PcapIf> networkInterfaces = new ArrayList<>();
         StringBuilder errorBuffer = new StringBuilder();
 
         // getting all network interfaces and aborting if there aren't any
         if (Pcap.findAllDevs(networkInterfaces, errorBuffer) == Pcap.NOT_OK || networkInterfaces.isEmpty()) {
-            Log.error("Error reading list of network interfaces: " + errorBuffer.toString());
+            logger.error("Error reading list of network interfaces: " + errorBuffer.toString());
             return;
         }
 
-        Log.info("Found network interfaces:");
+        logger.info("Found network interfaces:");
 
         // printing network interfaces
         AtomicInteger counter = new AtomicInteger(0);
-        networkInterfaces.forEach(e -> Log.info("#" + counter.getAndIncrement()
+        networkInterfaces.forEach(e -> logger.info("#" + counter.getAndIncrement()
                 + ": " + e.getName()
                 + " " + ((e.getDescription() != null) ? e.getDescription() : "No description available")));
 
         // waiting for user input
         PcapIf selectedInterface = null;
-        Log.info("Please enter the id of the device you like to sniff:");
+        logger.info("Please enter the id of the device you like to sniff:");
         Scanner scanner = new Scanner(System.in);
         do {
             try {
                 selectedInterface = networkInterfaces.get(Integer.parseInt(scanner.nextLine()));
             } catch (Exception e) {
-                Log.error(e.getMessage());
+                logger.error(e.getMessage());
                 selectedInterface = null;
             }
         } while (selectedInterface == null);
         scanner.close();
 
         // display selected interface
-        Log.info("Selected interface " + ((selectedInterface.getDescription() != null)
+        logger.info("Selected interface " + ((selectedInterface.getDescription() != null)
                 ? selectedInterface.getDescription() : "No description available") + " reading...");
 
         // capture the network interface
@@ -62,7 +67,7 @@ public class Sniffer {
         Pcap pcap = Pcap.openLive(selectedInterface.getName(), snaplen, flags, timeout, errorBuffer);
 
         if (pcap == null) {
-            Log.error("Error while opening interface for capture: " + errorBuffer.toString());
+            logger.error("Error while opening interface for capture: " + errorBuffer.toString());
             return;
         }
 
@@ -71,11 +76,11 @@ public class Sniffer {
             String[] parsedPacket = packet.toString().split("Payload");
             if(parsedPacket.length < 2) return;
 
-            Log.info(
+            logger.info(
                     "Received packet at " + new Date(packet.getCaptureHeader().timestampInMillis()) +
                             " caplen=" + packet.getCaptureHeader().caplen() +
                             " len=" + packet.getCaptureHeader().wirelen() +
-                            " content1: " + Log.ANSI_YELLOW + parsedPacket[1].toString());
+                            " content1: " + ANSI_YELLOW + parsedPacket[1].toString());
         };
 
         // tells the thread to read

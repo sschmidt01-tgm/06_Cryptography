@@ -1,6 +1,7 @@
 package cryptpgraphy.secure;
 
-import cryptpgraphy.Log;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.crypto.*;
 import javax.crypto.spec.SecretKeySpec;
@@ -13,6 +14,9 @@ import java.security.*;
  * @version 1/18/2015
  */
 public class Test {
+
+    private static final Logger logger = LogManager.getLogger(Test.class);
+
     public static void main(String[] args) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, BadPaddingException, IllegalBlockSizeException {
 
         // generate Public and Private Key
@@ -40,17 +44,17 @@ public class Test {
         SecretKey aesKey = new SecretKeySpec(cipher.doFinal(encryptedData), "AES");
 
 
-        Log.info(secretKey.toString() + " algortihm: " + secretKey.getAlgorithm() + " format: " + secretKey.getFormat() + " enc: " + secretKey.getEncoded());
-        Log.info(aesKey.toString() + " algortihm: " + aesKey.getAlgorithm() + " format: " + aesKey.getFormat() + " enc: " + aesKey.getEncoded());
+        logger.info(secretKey.toString() + " algortihm: " + secretKey.getAlgorithm() + " format: " + secretKey.getFormat() + " enc: " + secretKey.getEncoded());
+        logger.info(aesKey.toString() + " algortihm: " + aesKey.getAlgorithm() + " format: " + aesKey.getFormat() + " enc: " + aesKey.getEncoded());
 
-        Log.info("" + aesKey.equals(secretKey));
-        Log.info("" + aesKey.getClass().equals(secretKey.getClass()));
+        logger.info("" + aesKey.equals(secretKey));
+        logger.info("" + aesKey.getClass().equals(secretKey.getClass()));
 
 
-        Log.info("decrypted the following: " + aesKey.getEncoded().toString());
+        logger.info("decrypted the following: " + aesKey.getEncoded().toString());
 
-        Log.info("" + secretKey.hashCode());
-        Log.info("" + aesKey.hashCode());
+        logger.info("" + secretKey.hashCode());
+        logger.info("" + aesKey.hashCode());
 
     }
 }

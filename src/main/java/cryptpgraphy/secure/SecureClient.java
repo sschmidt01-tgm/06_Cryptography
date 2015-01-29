@@ -20,7 +20,9 @@ import java.security.*;
  * @version 1/18/2015
  */
 public class SecureClient {
-    private static final Logger logger = LogManager.getLogger();
+
+    private static final Logger logger = LogManager.getLogger(SecureClient.class);
+
     public static void main(String [] args) throws NoSuchProviderException, NoSuchAlgorithmException {
         if (args.length != 2) {
             System.err.println(
