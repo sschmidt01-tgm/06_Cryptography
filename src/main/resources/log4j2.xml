@@ -9,6 +9,7 @@
     <Properties>
         <Property name="serverclient">serverclient.log</Property>
         <Property name="sniffer">sniffer.log</Property>
+        <Property name="plain">plain.log</Property>
     </Properties>
 
     <Appenders>
@@ -25,14 +26,22 @@
             <PatternLayout pattern="[%d{yyyy-MM-dd HH:mm:ss} %-5p]: %m%n"/>
         </File>
 
+        <File name="File3" fileName="${plain}">
+            <PatternLayout pattern="[%d{yyyy-MM-dd HH:mm:ss} %-5p]: %m%n"/>
+        </File>
+
     </Appenders>
 
     <Loggers>
-        <Logger name="cryptography.secure.Test" level="debug">
+        <Logger name="cryptography.plain" level="trace">
+            <AppenderRef ref="STDOUT"/>
+            <AppenderRef ref="File3"/>
+        </Logger>
+        <Logger name="cryptography.secure" level="trace">
             <AppenderRef ref="STDOUT"/>
             <AppenderRef ref="File1"/>
         </Logger>
-        <Logger name="cryptography.sniffer.Sniffer" level="debug">
+        <Logger name="cryptography.sniffer.Sniffer" level="trace">
             <AppenderRef ref="STDOUT"/>
             <AppenderRef ref="File2"/>
         </Logger>

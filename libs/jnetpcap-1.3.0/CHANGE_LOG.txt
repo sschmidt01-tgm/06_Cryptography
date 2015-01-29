@@ -19,7 +19,7 @@
 ################################################################################
 
                               jNetPcap Package
-                                 Change cryptpgraphy.Log
+                                 Change cryptography.Log
                                  
 == Release 1.3.0  (2011-04-01) ==
 
