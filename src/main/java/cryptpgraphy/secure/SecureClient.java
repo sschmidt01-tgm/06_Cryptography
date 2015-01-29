@@ -20,11 +20,11 @@ import java.security.*;
  * @version 1/18/2015
  */
 public class SecureClient {
-    private static final Logger logger = LogManager.getLogger(SecureClient.class);
+    private static final Logger logger = LogManager.getLogger();
     public static void main(String [] args) throws NoSuchProviderException, NoSuchAlgorithmException {
         if (args.length != 2) {
             System.err.println(
-                    "Usage: java EchoClient <host name> <port number>");
+                    "Usage: java SecureClient <host name> <port number>");
             System.exit(1);
         }
 

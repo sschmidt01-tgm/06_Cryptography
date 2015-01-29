@@ -1,7 +1,6 @@
 package cryptpgraphy.secure;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import cryptpgraphy.Log;
 
 import javax.crypto.*;
 import javax.crypto.spec.SecretKeySpec;
@@ -14,14 +13,13 @@ import java.security.*;
  * @version 1/18/2015
  */
 public class Test {
-    private static final Logger logger = LogManager.getLogger(SecureClient.class);
     public static void main(String[] args) throws NoSuchAlgorithmException, NoSuchPaddingException, InvalidKeyException, BadPaddingException, IllegalBlockSizeException {
 
         // generate Public and Private Key
         KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
         SecureRandom random = SecureRandom.getInstanceStrong();
 
-        keyPairGenerator.initialize(1024, random);
+        keyPairGenerator.initialize(2048, random);
         KeyPair keyPair = keyPairGenerator.generateKeyPair();
         PublicKey publicKey = keyPair.getPublic();
         PrivateKey privateKey = keyPair.getPrivate();
@@ -42,17 +40,17 @@ public class Test {
         SecretKey aesKey = new SecretKeySpec(cipher.doFinal(encryptedData), "AES");
 
 
-        logger.trace(secretKey.toString() + " algortihm: " + secretKey.getAlgorithm() + " format: " + secretKey.getFormat() + " enc: " + secretKey.getEncoded());
-        logger.trace(aesKey.toString() + " algortihm: " + aesKey.getAlgorithm() + " format: " + aesKey.getFormat() + " enc: " + aesKey.getEncoded() );
+        Log.info(secretKey.toString() + " algortihm: " + secretKey.getAlgorithm() + " format: " + secretKey.getFormat() + " enc: " + secretKey.getEncoded());
+        Log.info(aesKey.toString() + " algortihm: " + aesKey.getAlgorithm() + " format: " + aesKey.getFormat() + " enc: " + aesKey.getEncoded());
 
-        logger.trace(aesKey.equals(secretKey));
-        logger.trace(aesKey.getClass().equals(secretKey.getClass()));
+        Log.info("" + aesKey.equals(secretKey));
+        Log.info("" + aesKey.getClass().equals(secretKey.getClass()));
 
 
-        logger.trace("decrypted the following: " + aesKey.getEncoded().toString());
+        Log.info("decrypted the following: " + aesKey.getEncoded().toString());
 
-        logger.trace(secretKey.hashCode());
-        logger.trace(aesKey.hashCode());
+        Log.info("" + secretKey.hashCode());
+        Log.info("" + aesKey.hashCode());
 
     }
 }

@@ -7,7 +7,8 @@
 <Configuration>
 
     <Properties>
-        <Property name="filename">cryptography.log</Property>
+        <Property name="serverclient">serverclient.log</Property>
+        <Property name="sniffer">sniffer.log</Property>
     </Properties>
 
     <Appenders>
@@ -16,7 +17,11 @@
             <PatternLayout pattern="[%d{yyyy-MM-dd HH:mm:ss} %-5p]: %m%n"/>
         </Console>
 
-        <File name="File" fileName="${filename}">
+        <File name="File1" fileName="${serverclient}">
+            <PatternLayout pattern="[%d{yyyy-MM-dd HH:mm:ss} %-5p]: %m%n"/>
+        </File>
+
+        <File name="File2" fileName="${sniffer}">
             <PatternLayout pattern="[%d{yyyy-MM-dd HH:mm:ss} %-5p]: %m%n"/>
         </File>
 
@@ -24,9 +29,12 @@
 
     <Loggers>
         <Logger name="org.apache.log4j.xml" level="info"/>
+        <Logger name="cryptography.sniffer.Sniffer" level="info">
+            <AppenderRef ref="File2"/>
+        </Logger>
         <Root level="debug">
             <AppenderRef ref="STDOUT"/>
-            <!-- <AppenderRef ref="File"/> -->
+            <AppenderRef ref="File1"/>
         </Root>
     </Loggers>
 

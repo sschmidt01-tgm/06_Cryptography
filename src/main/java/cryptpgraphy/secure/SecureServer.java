@@ -29,7 +29,7 @@ public class SecureServer {
 
     public static void main(String[] args) throws NoSuchPaddingException, NoSuchAlgorithmException, NoSuchProviderException {
         if (args.length != 1) {
-            System.err.println("Usage: java EchoServer <port number>");
+            System.err.println("Usage: java SecureServer <port number>");
             System.exit(1);
         }
 
