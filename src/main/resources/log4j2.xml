@@ -34,15 +34,12 @@
 
     <Loggers>
         <Logger name="cryptography.plain" level="trace">
-            <AppenderRef ref="STDOUT"/>
             <AppenderRef ref="File3"/>
         </Logger>
         <Logger name="cryptography.secure" level="trace">
-            <AppenderRef ref="STDOUT"/>
             <AppenderRef ref="File1"/>
         </Logger>
         <Logger name="cryptography.sniffer.Sniffer" level="trace">
-            <AppenderRef ref="STDOUT"/>
             <AppenderRef ref="File2"/>
         </Logger>
     </Loggers>

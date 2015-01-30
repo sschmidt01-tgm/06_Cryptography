@@ -4,6 +4,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import javax.crypto.*;
+import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.io.*;
 import java.net.Socket;
@@ -23,7 +24,7 @@ public class SecureClient {
 
     private static final Logger logger = LogManager.getLogger(SecureClient.class);
 
-    public static void main(String [] args) throws NoSuchProviderException, NoSuchAlgorithmException {
+    public static void main(String [] args) throws NoSuchProviderException, NoSuchAlgorithmException, InvalidAlgorithmParameterException {
         if (args.length != 2) {
             System.err.println(
                     "Usage: java SecureClient <host name> <port number>");
@@ -32,12 +33,13 @@ public class SecureClient {
 
         String hostName = args[0];
         int portNumber = Integer.parseInt(args[1]);
+        String message = "Just Read the Instructions";
 
         // generate Public and Private Key
         KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
         SecureRandom random = SecureRandom.getInstanceStrong();
 
-        keyPairGenerator.initialize(1024, random);
+        keyPairGenerator.initialize(2048, random);
         KeyPair keyPair = keyPairGenerator.generateKeyPair();
         PublicKey publicKey = keyPair.getPublic();
         PrivateKey privateKey = keyPair.getPrivate();
@@ -73,6 +75,18 @@ public class SecureClient {
             aesKey = new SecretKeySpec(cipher.doFinal(encryptedData), "AES");
 
             logger.trace("decrypted the following AES symmetric key: " + aesKey.toString());
+
+
+            // use the AES key for encrypting a message
+            cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+            byte[] iv = new byte[16];
+            random = new SecureRandom();
+            random.nextBytes(iv);
+            IvParameterSpec ivParameterSpec = new IvParameterSpec(iv);
+            cipher.init(Cipher.ENCRYPT_MODE, aesKey, ivParameterSpec);
+            encryptedData = cipher.doFinal(message.getBytes("UTF-8"));
+            String encrypted = new String(encryptedData);
+            logger.info("encrypted aes message: " + encrypted);
 
         } catch (IOException e) {
             e.printStackTrace();
