@@ -2,17 +2,20 @@ package cryptography.secure;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import sun.misc.IOUtils;
 
 import javax.crypto.Cipher;
 import javax.crypto.KeyGenerator;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.SecretKey;
+import javax.crypto.spec.IvParameterSpec;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
 import java.security.PublicKey;
+import java.security.SecureRandom;
 
 /**
  * Receives a RSA asymmetric public key from the Client
@@ -49,7 +52,7 @@ public class SecureServer {
 
             // generates AES symmetric key
             KeyGenerator keyGen = KeyGenerator.getInstance("AES");
-            keyGen.init(256);
+            keyGen.init(128);
             SecretKey secretKey = keyGen.generateKey();
 
             logger.trace("generated AES symmetric key: " + secretKey.toString());
@@ -66,6 +69,25 @@ public class SecureServer {
             dataOutputStream.writeInt(encryptedData.length);
             dataOutputStream.write(encryptedData, 0, encryptedData.length);
             logger.trace("sent AES symmetric key");
+
+
+            // read IV
+            DataInputStream dataInputStream = new DataInputStream(
+                    clientSocket.getInputStream());
+            byte[] iv = new byte[16];
+            dataInputStream.read(iv);
+            IvParameterSpec ivParameterSpec = new IvParameterSpec(iv);
+
+            // read encrypted message
+            dataInputStream.read(encryptedData);
+
+            logger.info("received encrypted message: " + encryptedData);
+
+            // use AES key for decrypting the message
+            cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+            cipher.init(Cipher.DECRYPT_MODE, secretKey, ivParameterSpec);
+            String decrypted = new String(cipher.doFinal(encryptedData), "UTF-8");
+            logger.info("decrypted message: " + decrypted );
 
         } catch (Exception e ){
             e.printStackTrace();

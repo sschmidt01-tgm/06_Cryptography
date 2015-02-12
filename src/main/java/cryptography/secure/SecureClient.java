@@ -7,6 +7,7 @@ import javax.crypto.*;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.io.*;
+import java.net.InetSocketAddress;
 import java.net.Socket;
 import java.security.*;
 
@@ -49,7 +50,9 @@ public class SecureClient {
         // Communication
         try{
             // Sockets
-            Socket socket = new Socket(hostName, portNumber);
+//            Socket socket = new Socket(hostName, portNumber);
+            Socket socket = new Socket();
+            socket.connect(new InetSocketAddress(hostName, portNumber), 5000);
             ObjectOutputStream objectOutputStream = new ObjectOutputStream(
                     socket.getOutputStream());
             objectOutputStream.writeObject(publicKey);
@@ -71,11 +74,9 @@ public class SecureClient {
             // DECRYPTION of AES Key
             Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
             cipher.init(Cipher.DECRYPT_MODE, privateKey);
-            SecretKey aesKey = null;
-            aesKey = new SecretKeySpec(cipher.doFinal(encryptedData), "AES");
+            SecretKey aesKey = new SecretKeySpec(cipher.doFinal(encryptedData), "AES");
 
             logger.trace("decrypted the following AES symmetric key: " + aesKey.toString());
-
 
             // use the AES key for encrypting a message
             cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
@@ -88,15 +89,18 @@ public class SecureClient {
             String encrypted = new String(encryptedData);
             logger.info("encrypted aes message: " + encrypted);
 
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (IllegalBlockSizeException e) {
-            e.printStackTrace();
-        } catch (InvalidKeyException e) {
-            e.printStackTrace();
-        } catch (BadPaddingException e) {
-            e.printStackTrace();
-        } catch (NoSuchPaddingException e) {
+            // send IV
+            OutputStream outputStream = socket.getOutputStream();
+            DataOutputStream dataOutputStream = new DataOutputStream(outputStream);
+            dataOutputStream.write(iv);
+            dataOutputStream.flush();
+
+            // send encrypted message
+            dataOutputStream = new DataOutputStream(outputStream);
+            dataOutputStream.write(encryptedData);
+            dataOutputStream.flush();
+
+        } catch (Exception e ){
             e.printStackTrace();
         }
     }

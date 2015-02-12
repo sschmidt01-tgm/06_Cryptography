@@ -47,20 +47,6 @@ public class Test {
         cipher.init(Cipher.DECRYPT_MODE, privateKey);
         SecretKey aesKey = new SecretKeySpec(cipher.doFinal(encryptedData), "AES");
 
-
-        logger.info(secretKey.toString() + " algortihm: " + secretKey.getAlgorithm() + " format: " + secretKey.getFormat() + " enc: " + secretKey.getEncoded());
-        logger.info(aesKey.toString() + " algortihm: " + aesKey.getAlgorithm() + " format: " + aesKey.getFormat() + " enc: " + aesKey.getEncoded());
-
-        logger.info("" + aesKey.equals(secretKey));
-        logger.info("" + aesKey.getClass().equals(secretKey.getClass()));
-
-
-        logger.info("decrypted the following: " + new String(aesKey.getEncoded()));
-
-        logger.info("" + secretKey.hashCode());
-        logger.info("" + aesKey.hashCode());
-
-
         // use the AES key for encrypting a message
         cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
         byte[] iv = new byte[16];
@@ -70,12 +56,12 @@ public class Test {
         cipher.init(Cipher.ENCRYPT_MODE, aesKey, ivParameterSpec);
         encryptedData = cipher.doFinal(message.getBytes("UTF-8"));
         String encrypted = new String(encryptedData);
-        logger.info("encrypted aes message: " + encrypted);
+        logger.info("encrypted message: " + encrypted);
 
         // use AES key for decrypting a message
         cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
         cipher.init(Cipher.DECRYPT_MODE, aesKey,ivParameterSpec);
         String decrypted = new String(cipher.doFinal(encryptedData), "UTF-8");
-        logger.info("decrypted aes message: " + decrypted );
+        logger.info("decrypted message: " + decrypted );
     }
 }
