@@ -97,6 +97,7 @@ public class SecureClient {
 
             // send encrypted message
             dataOutputStream = new DataOutputStream(outputStream);
+            dataOutputStream.writeInt(encryptedData.length);
             dataOutputStream.write(encryptedData);
             dataOutputStream.flush();
 

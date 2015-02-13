@@ -37,6 +37,7 @@ public class SecureServer {
         }
 
         int portNumber = Integer.parseInt(args[0]);
+        byte[] message = null;
 
         logger.trace("Sever started");
 
@@ -79,14 +80,17 @@ public class SecureServer {
             IvParameterSpec ivParameterSpec = new IvParameterSpec(iv);
 
             // read encrypted message
-            dataInputStream.read(encryptedData);
-
+            int length = dataInputStream.readInt(); // read length of incoming message
+            if (length > 0) {
+                message = new byte[length];
+                dataInputStream.readFully(message, 0, message.length); // read the message
+            }
             logger.info("received encrypted message: " + encryptedData);
 
             // use AES key for decrypting the message
             cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
             cipher.init(Cipher.DECRYPT_MODE, secretKey, ivParameterSpec);
-            String decrypted = new String(cipher.doFinal(encryptedData), "UTF-8");
+            String decrypted = new String(cipher.doFinal(message), "UTF-8");
             logger.info("decrypted message: " + decrypted );
 
         } catch (Exception e ){
